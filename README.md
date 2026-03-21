@@ -17,7 +17,7 @@ A fast CI/CD tool for uploading, invoking, and logging lambdas - without having 
 - It uses awk for all the colouring and also for removing some useless verbosity (such as the time being printed twice every line)
 
 # Licence
-This repo is licensed with AGPL3.0, a copyleft license.
-This licence ensures that this remains open source regardless of modifications or through being provided via a SaaS.
-Additionally, the software is provided "as is" with no warranty, and the authors or contributors are not liable for any damages arising from its use.
+This repo is licensed with AGPL3.0, a copyleft license.  
+This licence ensures that this remains open source regardless of modifications or through being provided via a SaaS.  
+Additionally, the software is provided "as is" with no warranty, and the authors or contributors are not liable for any damages arising from its use.  
 All details are in the LICENSE file.
