@@ -5,15 +5,17 @@ A fast CI/CD tool for uploading, invoking, and logging lambdas - without having 
 - Put the deploy file somewhere permanent. The file is a Bash shell script but **leave it without any extension** (ex: `"C:\Users\scale\Files\Dev\deploy\deploy"`)
 - Add the deploy file to path by running this in a Bash terminal (substituting your path - be careful to use POSIX format here): `echo 'export PATH="$PATH:/c/Users/scale/Files/Dev/deploy"' >> ~/.bashrc`
 - Reload your terminal: `source ~/.bashrc`
-- Run it: `deploy`
+
+# Running
+- Navigate to the folder of your lambda (ex: `cd "C:\Users\scale\Files\Dev\quickops\lambda\migrateDb"`)
+- Run `deploy`, with optional flags (ex: `deploy -u` if you want to upload only and skip invocation)
 
 ## Arguments
 - `-u` Upload only - skip invocation
 
 ## Code Notes
 - It gets the `FUNCTION_NAME` from the name of the parent folder
-- `export MSYS_NO_PATHCONV=1` and `unset MSYS_NO_PATHCONV` are there because at one point this shell script erroneously sent the entire path to the parent folder rather than just the parent folder name, however that may be vestigial as it may only be an issue with using aws logs (which this script no longer uses)
-- It uses awk for all the colouring and also for removing some useless verbosity (such as the time being printed twice every line)
+- It uses `awk` for all the colouring and also for removing some useless verbosity (such as the time being printed twice every line)
 
 # Licence
 This repo is licensed with AGPL3.0, a copyleft license.  
