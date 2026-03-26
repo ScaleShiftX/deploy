@@ -2,7 +2,7 @@ A fast CI/CD tool for uploading, invoking, and logging lambdas - without having 
 <img width="1170" height="445" alt="screenshot" src="screenshot.png" />
 
 ## Installation
-- Put the deploy file somewhere permanent. The file is a bash shell script but **leave it without any extension** (ex: `"C:\Users\scale\Files\Dev\deploy\deploy"`)
+- Put the deploy file somewhere permanent. The file is a Bash shell script but **leave it without any extension** (ex: `"C:\Users\scale\Files\Dev\deploy\deploy"`)
 - Add the deploy file to path by running this in a Bash terminal (substituting your path - be careful to use POSIX format here): `echo 'export PATH="$PATH:/c/Users/scale/Files/Dev/deploy"' >> ~/.bashrc`
 - Reload your terminal: `source ~/.bashrc`
 - Run it: `deploy`
