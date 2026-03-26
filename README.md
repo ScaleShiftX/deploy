@@ -1,16 +1,14 @@
 A fast CI/CD tool for uploading, invoking, and logging lambdas - without having to wait on GitHub Actions. Intended for testing which would be small enough to be a pain for git commits/pushes.
 <img width="1170" height="445" alt="screenshot" src="screenshot.png" />
 
-## Global Usage
+## Installation
 - Put the deploy file somewhere permanent. The file is a bash shell script but **leave it without any extension** (ex: `"C:\Users\scale\Files\Dev\deploy\deploy"`)
-- Add the deploy file to path by running this in a Bash terminal (substituting your path): `echo 'export PATH="$PATH:/c/Users/scale/Files/Dev/deploy"' >> ~/.bashrc`
+- Add the deploy file to path by running this in a Bash terminal (substituting your path - be careful to use POSIX format here): `echo 'export PATH="$PATH:/c/Users/scale/Files/Dev/deploy"' >> ~/.bashrc`
 - Reload your terminal: `source ~/.bashrc`
 - Run it: `deploy`
 
-## Portable Usage (not recommended)
-- Save the deploy file as a `.sh` file type (ex: `deploy.sh`)
-- Put it in the root folder of the lambda
-- Run it in a Bash terminal (ex: `./deploy.sh`)
+## Arguments
+- `-u` Upload only - skip invocation
 
 ## Code Notes
 - It gets the `FUNCTION_NAME` from the name of the parent folder

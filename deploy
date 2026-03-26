@@ -2,6 +2,18 @@ FUNCTION_NAME=$(basename "$(pwd -W 2>/dev/null || pwd)")
 export MSYS_NO_PATHCONV=1
 rm -f function.zip
 
+#Check for arguments
+UPLOAD_ONLY=0
+
+for arg in "$@"; do
+  case $arg in
+    -u|--upload-only)
+      UPLOAD_ONLY=1
+      shift
+      ;;
+  esac
+done
+
 #Zip
 echo -n -e "Zipping $FUNCTION_NAME..."
 zip -r -q function.zip .
@@ -15,6 +27,13 @@ echo -n -e "\r\033[K" #Wipe the previous line
 sleep 0.2 #Give a moment for AWS to update the code
 
 #Invoke and log (with colouring)
+if [ "$UPLOAD_ONLY" -eq 1 ]; then
+  echo "Upload complete (skipped invoke)"
+  unset MSYS_NO_PATHCONV
+  rm -f function.zip
+  exit 0
+fi
+
 aws lambda invoke \
   --function-name "$FUNCTION_NAME" \
   --log-type Tail \
