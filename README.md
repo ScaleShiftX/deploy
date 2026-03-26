@@ -6,7 +6,7 @@ A fast CI/CD tool for uploading, invoking, and logging lambdas - without having 
 - Add the deploy file to path by running this in a Bash terminal (substituting your path - be careful to use POSIX format here): `echo 'export PATH="$PATH:/c/Users/scale/Files/Dev/deploy"' >> ~/.bashrc`
 - Reload your terminal: `source ~/.bashrc`
 
-# Running
+## Running
 - Navigate to the folder of your lambda (ex: `cd "C:\Users\scale\Files\Dev\quickops\lambda\migrateDb"`)
 - Run `deploy`, with optional flags (ex: `deploy -u` if you want to upload only and skip invocation)
 
