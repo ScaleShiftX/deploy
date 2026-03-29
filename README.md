@@ -11,7 +11,11 @@ A fast CI/CD tool for uploading, invoking, and logging lambdas - without having 
 - Run `deploy`, with optional flags (ex: `deploy -u` if you want to upload only and skip invocation)
 
 ## Arguments
-- `-u` Upload only - skip invocation
+| Flag | Description |
+|------|------------|
+| `-h`, `--help` | Help - prints out all available flags |
+| `-u`, `--upload-only` | Upload only |
+| `-i`, `--invoke-only` | Invoke only |
 
 ## Code Notes
 - It gets the `FUNCTION_NAME` from the name of the parent folder

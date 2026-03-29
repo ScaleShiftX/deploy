@@ -1,43 +1,82 @@
+#Get lambda function name from parent folder name
 FUNCTION_NAME=$(basename "$(pwd -W 2>/dev/null || pwd)")
+
+#Clear previous zip if there is one (there shouldn't be)
 rm -f function.zip
+
+#Help
+print_help() {
+	cat <<EOF
+Usage: $(basename "$0") [OPTIONS]
+
+Options:
+  -u, --upload-only    Upload only
+  -i, --invoke-only    Invoke only
+  -h, --help           Help - shows this help message
+EOF
+}
 
 #Check for arguments
 UPLOAD_ONLY=0
+INVOKE_ONLY=0
 
 for arg in "$@"; do
-  case $arg in
-    -u|--upload-only)
-      UPLOAD_ONLY=1
-      shift
-      ;;
-  esac
+	case $arg in
+		-u|--upload-only)
+			UPLOAD_ONLY=1
+			shift
+			;;
+		-i|--invoke-only)
+			INVOKE_ONLY=1
+			shift
+			;;
+		-h|--help)
+			print_help
+			exit 0
+			shift
+			;;
+		*)
+			echo "Unknown option: $arg"
+			print_help
+			exit 1
+			;;
+	esac
 done
 
-#Zip
-echo -n -e "Zipping $FUNCTION_NAME..."
-zip -r -q function.zip .
-echo -n -e "\r\033[K" #Wipe the previous line
+#Conflicting flags warning
+if [ "$UPLOAD_ONLY" -eq 1 ] && [ "$INVOKE_ONLY" -eq 1 ]; then
+	echo "Using --upload-only and --invoke-only together has the same effect as using neither flag."
+fi
 
-#Upload
-echo -n -e "Uploading $FUNCTION_NAME..."
-aws lambda update-function-code --function-name "$FUNCTION_NAME" --zip-file fileb://function.zip > /dev/null
-echo -n -e "\r\033[K" #Wipe the previous line
+#Only zip and upload if NOT INVOKE_ONLY
+if [ "$INVOKE_ONLY" -eq 0 ]; then
+	#Zip
+	echo -n -e "Zipping $FUNCTION_NAME..."
+	zip -r -q function.zip .
+	echo -n -e "\r\033[K" #Wipe the previous line
 
-sleep 0.2 #Give a moment for AWS to update the code
+	#Upload
+	echo -n -e "Uploading $FUNCTION_NAME..."
+	aws lambda update-function-code --function-name "$FUNCTION_NAME" --zip-file fileb://function.zip > /dev/null
+	echo -n -e "\r\033[K" #Wipe the previous line
+
+	sleep 0.2 #Give a moment for AWS to update the code
+fi
 
 #Invoke and log (with colouring)
-if [ "$UPLOAD_ONLY" -eq 1 ]; then
-  echo "Upload complete (skipped invoke)"
-  rm -f function.zip
-  exit 0
+#(Exit here if UPLOAD_ONLY and not INVOKE_ONLY)
+if [ "$UPLOAD_ONLY" -eq 1 ] && [ "$INVOKE_ONLY" -eq 0 ]; then
+	echo "Upload complete (skipped invoke)"
+	rm -f function.zip
+	exit 0
 fi
 
 aws lambda invoke \
-  --function-name "$FUNCTION_NAME" \
-  --log-type Tail \
-  response.json \
-  --query 'LogResult' \
-  --output text | base64 --decode 2>/dev/null | awk '
+	--function-name "$FUNCTION_NAME" \
+	--log-type Tail \
+	response.json \
+	--query 'LogResult' \
+	--output text | base64 --decode 2>/dev/null | awk '
 BEGIN {
 	in_error=0
 }
@@ -55,9 +94,9 @@ BEGIN {
 
 #Colour errors
 /ERROR/ {
-  in_error=1
-  print "\033[31m" $0 "\033[0m"
-  next
+	in_error=1
+	print "\033[31m" $0 "\033[0m"
+	next
 }
 
 /^[[:space:]]+at / {
@@ -88,12 +127,12 @@ BEGIN {
 
 #Lambda response, pretty-printed
 jq '
-  .body |= (
-    if type == "string"
-    then (try fromjson catch .)
-    else .
-    end
-  )
+	.body |= (
+		if type == "string"
+		then (try fromjson catch .)
+		else .
+		end
+	)
 ' response.json
 
 rm -f function.zip
