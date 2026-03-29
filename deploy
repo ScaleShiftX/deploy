@@ -54,13 +54,17 @@ if [ "$INVOKE_ONLY" -eq 0 ]; then
 	echo -n -e "Zipping $FUNCTION_NAME..."
 	zip -r -q function.zip .
 	echo -n -e "\r\033[K" #Wipe the previous line
-
+	
 	#Upload
 	echo -n -e "Uploading $FUNCTION_NAME..."
 	aws lambda update-function-code --function-name "$FUNCTION_NAME" --zip-file fileb://function.zip > /dev/null
 	echo -n -e "\r\033[K" #Wipe the previous line
-
-	sleep 0.2 #Give a moment for AWS to update the code
+	
+	#Wait until AWS confirms the new code is live
+	echo -n -e "Waiting for $FUNCTION_NAME to be updated on AWS..."
+	aws lambda wait function-updated --function-name "$FUNCTION_NAME"
+	echo -n -e "\r\033[K" #Wipe the previous line
+	#sleep 0.2 #Give a moment for AWS to update the code
 fi
 
 #Invoke and log (with colouring)
@@ -126,13 +130,15 @@ BEGIN {
 '
 
 #Lambda response, pretty-printed
-jq '
-	.body |= (
-		if type == "string"
-		then (try fromjson catch .)
-		else .
-		end
-	)
+#If .body is JSON string, try to parse it. If parsing fails, print raw .body
+#Else, .body is already object, so print it as it already is
+jq -r '
+  .body = (
+    if (.body | type) == "string"
+    then (try (.body | fromjson) catch .body)
+    else .body
+    end
+  )
 ' response.json
 
 rm -f function.zip
