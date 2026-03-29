@@ -48,8 +48,8 @@ if [ "$UPLOAD_ONLY" -eq 1 ] && [ "$INVOKE_ONLY" -eq 1 ]; then
 	echo "Using --upload-only and --invoke-only together has the same effect as using neither flag."
 fi
 
-#Only zip and upload if NOT INVOKE_ONLY
-if [ "$INVOKE_ONLY" -eq 0 ]; then
+#Only zip and upload if UPLOAD_ONLY or NOT INVOKE_ONLY
+if [ "$UPLOAD_ONLY" -eq 1 ] || [ "$INVOKE_ONLY" -eq 0 ]; then
 	#Zip
 	echo -n -e "Zipping $FUNCTION_NAME..."
 	zip -r -q function.zip .
